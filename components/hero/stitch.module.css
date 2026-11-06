@@ -1,0 +1,175 @@
+/* ------------------------------------------------------------------ */
+/* Stitch headline – sewing machine + running stitch                   */
+/* ------------------------------------------------------------------ */
+
+.headline {
+  position: relative;
+}
+
+/* Words start hidden (opacity, not display) so the h1 keeps its size. */
+.word {
+  display: inline-block;
+  opacity: 0;
+  /* Failsafe: if the page's JS never runs, the text still appears.
+     StitchHeadline switches this off as soon as it takes control. */
+  animation: failsafeShow 0.4s ease-out 5s forwards;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---- Machine ---------------------------------------------------- */
+.machine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2.2em;
+  aspect-ratio: 200 / 150;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 6px rgba(201, 162, 74, 0.35));
+}
+
+@media (max-width: 767px) {
+  .machine {
+    height: 2em;
+  }
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.isSewing .needle {
+  animation: needleBounce 0.14s linear infinite;
+}
+
+.wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.isSewing .wheel {
+  animation: wheelSpin 0.6s linear infinite;
+}
+
+/* Static preview: run the parts without moving the machine */
+.demoSewing .needle {
+  animation: needleBounce 0.14s linear infinite;
+}
+.demoSewing .wheel {
+  animation: wheelSpin 0.6s linear infinite;
+}
+
+@keyframes needleBounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes wheelSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Running stitch ------------------------------------------- */
+.stitchLine {
+  position: absolute;
+  height: 2px;
+  width: 0;
+  opacity: 0.8;
+  background: repeating-linear-gradient(90deg, #c9a24a 0 10px, transparent 10px 16px);
+  pointer-events: none;
+}
+
+.stitchDot {
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: #e8c77a;
+  transform: translateY(-50%);
+  box-shadow: 0 0 6px rgba(201, 162, 74, 0.8);
+}
+
+/* ---- Hero helpers --------------------------------------------- */
+.badgeIn {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+.restHidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Same failsafe as .word; Hero removes this class once its JS is running. */
+.restFailsafe {
+  animation: failsafeRest 0.4s ease-out 5s forwards;
+}
+
+@keyframes failsafeShow {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes failsafeRest {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.restIn {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    opacity: 1;
+  }
+  .machine {
+    display: none;
+  }
+  .badgeIn,
+  .restIn {
+    animation: none;
+  }
+}

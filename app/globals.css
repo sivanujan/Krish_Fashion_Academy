@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-dark: #1A1D22;
+    --bg-dark-2: #22262D;
+    --border-dark: rgba(201, 162, 74, 0.18);
+    --bg-light: #F7F3EC;
+    --bg-light-2: #FFFFFF;
+    --border-light: #E7DFD0;
+    --gold: #C9A24A;
+    --gold-light: #E8C77A;
+    --gold-text-on-light: #8A6A1F;
+    --text-on-dark: #F4EFE6;
+    --muted-on-dark: #B8B2A7;
+    --text-on-light: #1F2329;
+    --muted-on-light: #5B5850;
+    --charcoal: #22262D;
+    --charcoal-darker: #1A1D22;
+    --off-white: #F7F3EC;
+  }
+
+  html {
+    scroll-padding-top: 72px;
+  }
+
+  body {
+    background-color: var(--bg-light);
+    color: var(--text-on-light);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-cormorant), Georgia, serif;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Tabular figures for numbers, dates, steps */
+.num-tabular,
+.tabular-nums,
+[data-num] {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Swiper custom gold styling */
+.swiper-pagination-bullet {
+  background: #C9A24A !important;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  width: 24px !important;
+  border-radius: 9999px !important;
+}
+
+/* Luxury border divider */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A24A 30%, #E8C77A 50%, #C9A24A 70%, transparent);
+}
+
+/* Gold stitch dashed divider between dark and light sections */
+.gold-stitch-divider {
+  width: 100%;
+  height: 2px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #C9A24A 0,
+    #C9A24A 10px,
+    transparent 10px,
+    transparent 16px
+  );
+  opacity: 0.65;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Swiper custom gold styling */
+.swiper-pagination-bullet {
+  background: #C9A24A !important;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  width: 24px !important;
+  border-radius: 9999px !important;
+}
+
+/* Luxury border divider */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A24A 30%, #E8C77A 50%, #C9A24A 70%, transparent);
+}

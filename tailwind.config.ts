@@ -1,0 +1,70 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        "bg-dark": "var(--bg-dark)",
+        "bg-dark-2": "var(--bg-dark-2)",
+        "border-dark": "var(--border-dark)",
+        "bg-light": "var(--bg-light)",
+        "bg-light-2": "var(--bg-light-2)",
+        "border-light": "var(--border-light)",
+        "gold-text-light": "var(--gold-text-on-light)",
+        "text-on-dark": "var(--text-on-dark)",
+        "muted-on-dark": "var(--muted-on-dark)",
+        "text-on-light": "var(--text-on-light)",
+        "muted-on-light": "var(--muted-on-light)",
+        gold: {
+          DEFAULT: "var(--gold)",
+          light: "var(--gold-light)",
+          dark: "var(--gold-text-on-light)",
+          "text-light": "var(--gold-text-on-light)",
+          50: "#FAF6EE",
+          100: "#F5ECCF",
+          200: "#E8C77A",
+          300: "#D9B45D",
+          400: "#C9A24A",
+          500: "#B88E35",
+          600: "#9A7326",
+          700: "#8A6A1F",
+          800: "#523A13",
+          900: "#312209",
+        },
+        charcoal: {
+          DEFAULT: "var(--bg-dark-2)",
+          darker: "var(--bg-dark)",
+          darkest: "#14171A",
+          light: "var(--muted-on-light)",
+          50: "#F5F6F7",
+          100: "#E5E7EB",
+          200: "#CBD0D6",
+          300: "#B8B2A7",
+          400: "#6B7280",
+          500: "#5B5850",
+          600: "#374151",
+          700: "#22262D",
+          800: "#1A1D22",
+          900: "#14171A",
+        },
+        "off-white": "var(--bg-light)",
+        surface: "var(--bg-light-2)",
+        subtle: "#FAF8F5",
+        heading: "var(--text-on-light)",
+        body: "var(--muted-on-light)",
+      },
+      fontFamily: {
+        serif: ["var(--font-cormorant)", "Georgia", "serif"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
