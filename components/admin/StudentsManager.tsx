@@ -9,20 +9,43 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils";
-import type { Profile } from "@/types/database";
-import { UserPlus, Search, Phone, Mail, ShieldAlert, CheckCircle2, AlertCircle } from "lucide-react";
+import type { Profile, Recording, RecordingAccess } from "@/types/database";
+import {
+  UserPlus,
+  Search,
+  Phone,
+  Mail,
+  ShieldAlert,
+  CheckCircle2,
+  AlertCircle,
+  Video,
+  X,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import { toggleStudentRecordingAccessAction } from "@/lib/actions/recordings";
 
 interface StudentsManagerProps {
   initialStudents: Profile[];
+  initialRecordings?: Recording[];
+  initialAccessList?: RecordingAccess[];
 }
 
 export default function StudentsManager({
   initialStudents,
+  initialRecordings = [],
+  initialAccessList = [],
 }: StudentsManagerProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successInfo, setSuccessInfo] = useState<string | null>(null);
+
+  // Student Recordings Modal State
+  const [accessList, setAccessList] = useState<RecordingAccess[]>(initialAccessList);
+  const [recordingsStudent, setRecordingsStudent] = useState<Profile | null>(null);
+  const [isRecordingsModalOpen, setIsRecordingsModalOpen] = useState(false);
+  const [togglingRecordingId, setTogglingRecordingId] = useState<string | null>(null);
 
   const {
     register,
@@ -116,48 +139,76 @@ export default function StudentsManager({
                   <th className="py-3 px-4">Student Name</th>
                   <th className="py-3 px-4">Phone / WhatsApp</th>
                   <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Class Recordings</th>
                   <th className="py-3 px-4">Registered</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-charcoal/10">
-                {filtered.map((student) => (
-                  <tr key={student.id} className="hover:bg-subtle/50 transition-colors">
-                    <td className="py-3.5 px-4 font-medium text-heading text-sm">
-                      {student.full_name}
-                    </td>
-                    <td className="py-3.5 px-4 text-charcoal-light">
-                      {student.phone || "No phone registered"}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <Badge variant={student.is_active ? "success" : "danger"}>
-                        {student.is_active ? "Active" : "Deactivated"}
-                      </Badge>
-                    </td>
-                    <td className="py-3.5 px-4 text-charcoal-light">
-                      {formatDate(student.created_at)}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleToggleStatus(
-                            student.id,
-                            student.is_active,
-                            student.full_name
-                          )
-                        }
-                        className={`text-xs uppercase tracking-wider font-medium hover:underline ${
-                          student.is_active
-                            ? "text-rose-600 hover:text-rose-800"
-                            : "text-emerald-600 hover:text-emerald-800"
-                        }`}
-                      >
-                        {student.is_active ? "Deactivate" : "Activate"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {filtered.map((student) => {
+                  const studentAccesses = accessList.filter((a) => a.student_id === student.id);
+                  return (
+                    <tr key={student.id} className="hover:bg-subtle/50 transition-colors">
+                      <td className="py-3.5 px-4 font-medium text-heading text-sm">
+                        {student.full_name}
+                      </td>
+                      <td className="py-3.5 px-4 text-charcoal-light">
+                        {student.phone || "No phone registered"}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <Badge variant={student.is_active ? "success" : "danger"}>
+                          {student.is_active ? "Active" : "Deactivated"}
+                        </Badge>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRecordingsStudent(student);
+                            setIsRecordingsModalOpen(true);
+                          }}
+                          className="inline-flex items-center space-x-1.5 text-xs text-gold-dark hover:underline bg-gold/10 px-2 py-1 rounded-sm border border-gold/20"
+                        >
+                          <Video className="w-3.5 h-3.5" />
+                          <span>{studentAccesses.length} Allowed</span>
+                        </button>
+                      </td>
+                      <td className="py-3.5 px-4 text-charcoal-light">
+                        {formatDate(student.created_at)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRecordingsStudent(student);
+                            setIsRecordingsModalOpen(true);
+                          }}
+                          className="text-xs text-gold-dark hover:underline font-medium uppercase tracking-wider"
+                        >
+                          Recordings
+                        </button>
+                        <span className="text-charcoal/30">|</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleToggleStatus(
+                              student.id,
+                              student.is_active,
+                              student.full_name
+                            )
+                          }
+                          className={`text-xs uppercase tracking-wider font-medium hover:underline ${
+                            student.is_active
+                              ? "text-rose-600 hover:text-rose-800"
+                              : "text-emerald-600 hover:text-emerald-800"
+                          }`}
+                        >
+                          {student.is_active ? "Deactivate" : "Activate"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -235,6 +286,121 @@ export default function StudentsManager({
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Recordings this student can watch Modal */}
+      {isRecordingsModalOpen && recordingsStudent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal-darkest/75 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-surface w-full max-w-xl rounded-sm border border-charcoal/20 p-6 shadow-2xl space-y-5 animate-in fade-in my-8">
+            <div className="flex items-center justify-between border-b border-charcoal/10 pb-3">
+              <div>
+                <h3 className="font-serif text-xl text-charcoal-darkest flex items-center space-x-2">
+                  <Video className="w-5 h-5 text-gold-dark" />
+                  <span>Recordings for {recordingsStudent.full_name}</span>
+                </h3>
+                <p className="text-xs text-charcoal-light mt-0.5">
+                  Toggle recording access for this specific student account.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsRecordingsModalOpen(false)}
+                className="text-charcoal/40 hover:text-charcoal p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {initialRecordings.length === 0 ? (
+              <div className="p-8 text-center text-xs text-charcoal-light">
+                No class recordings found in the library yet.
+              </div>
+            ) : (
+              <div className="max-h-96 overflow-y-auto divide-y divide-charcoal/10 border border-charcoal/15 rounded-sm">
+                {initialRecordings.map((recording) => {
+                  const hasAccess = accessList.some(
+                    (a) => a.student_id === recordingsStudent.id && a.recording_id === recording.id
+                  );
+                  const isPending = togglingRecordingId === recording.id;
+
+                  const handleToggleRecording = async () => {
+                    setTogglingRecordingId(recording.id);
+                    try {
+                      const res = await toggleStudentRecordingAccessAction(
+                        recordingsStudent.id,
+                        recording.id,
+                        !hasAccess
+                      );
+                      if (res.success) {
+                        setAccessList((prev) => {
+                          if (hasAccess) {
+                            return prev.filter(
+                              (a) =>
+                                !(a.student_id === recordingsStudent.id && a.recording_id === recording.id)
+                            );
+                          } else {
+                            return [
+                              ...prev,
+                              {
+                                recording_id: recording.id,
+                                student_id: recordingsStudent.id,
+                                granted_by: null,
+                                granted_at: new Date().toISOString(),
+                                expires_at: null,
+                              },
+                            ];
+                          }
+                        });
+                      }
+                    } finally {
+                      setTogglingRecordingId(null);
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={recording.id}
+                      className="p-3 flex items-center justify-between hover:bg-subtle/50 text-xs"
+                    >
+                      <div className="space-y-0.5 pr-3">
+                        <span className="font-medium text-charcoal-darkest block">
+                          {recording.title}
+                        </span>
+                        <div className="flex items-center space-x-2 text-[11px] text-charcoal-light">
+                          <span className="font-mono uppercase text-[9px] bg-charcoal/10 px-1 py-0.5 rounded-sm">
+                            {recording.source_type}
+                          </span>
+                          {recording.class_date && (
+                            <span>{formatDate(recording.class_date)}</span>
+                          )}
+                          {!recording.is_published && (
+                            <span className="text-amber-600 font-medium">(Draft)</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        disabled={isPending}
+                        onClick={handleToggleRecording}
+                        className={`px-3 py-1.5 rounded-sm text-xs font-medium uppercase tracking-wider transition-colors shrink-0 ${
+                          hasAccess
+                            ? "bg-emerald-100 text-emerald-800 hover:bg-rose-100 hover:text-rose-800"
+                            : "bg-charcoal/10 text-charcoal hover:bg-gold hover:text-charcoal-darkest"
+                        }`}
+                      >
+                        {isPending ? "..." : hasAccess ? "Revoke Access" : "Grant Access"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end pt-3 border-t border-charcoal/10">
+              <Button onClick={() => setIsRecordingsModalOpen(false)}>Done</Button>
+            </div>
           </div>
         </div>
       )}
