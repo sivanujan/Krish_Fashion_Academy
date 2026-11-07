@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { studentSchema } from "@/lib/validations/course";
 import { revalidatePath } from "next/cache";
 
@@ -28,39 +29,74 @@ export async function createStudentAction(data: unknown) {
     await ensureAdmin();
     const validated = studentSchema.parse(data);
 
-    // Using service role client (Server Action only, never exposed to client)
-    const adminSupabase = createAdminClient();
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const hasServiceRoleKey =
+      Boolean(serviceRoleKey) &&
+      !serviceRoleKey?.includes("placeholder") &&
+      (serviceRoleKey?.startsWith("sb_secret_") || serviceRoleKey?.startsWith("eyJ"));
 
-    // 1. Create auth user with pre-confirmed email
-    const { data: authUser, error: authError } = await adminSupabase.auth.admin.createUser({
-      email: validated.email,
-      password: validated.password,
-      email_confirm: true,
-      user_metadata: {
-        full_name: validated.full_name,
-        phone: validated.phone || null,
-        role: "student",
-      },
-    });
+    let createdUserId: string | null = null;
 
-    if (authError || !authUser.user) {
-      return { success: false, error: authError?.message || "Failed to create user account" };
-    }
+    if (hasServiceRoleKey) {
+      // 1. Preferred: Using service role client with pre-confirmed email
+      const adminSupabase = createAdminClient();
+      const { data: authUser, error: authError } = await adminSupabase.auth.admin.createUser({
+        email: validated.email,
+        password: validated.password,
+        email_confirm: true,
+        user_metadata: {
+          full_name: validated.full_name,
+          phone: validated.phone || null,
+          role: "student",
+        },
+      });
 
-    // Trigger on_auth_user_created automatically creates the row in public.profiles.
-    // Explicitly update profile to make sure phone & full_name are synced
-    await adminSupabase
-      .from("profiles")
-      .upsert({
-        id: authUser.user.id,
+      if (authError || !authUser.user) {
+        return { success: false, error: authError?.message || "Failed to create user account" };
+      }
+
+      createdUserId = authUser.user.id;
+
+      // Ensure profile has phone and name synced
+      await adminSupabase.from("profiles").upsert({
+        id: createdUserId,
         full_name: validated.full_name,
         phone: validated.phone || null,
         role: "student",
         is_active: true,
       });
+    } else {
+      // 2. Direct fallback: Create student account via standard Auth signup
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+      const signupClient = createSupabaseClient(supabaseUrl, anonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+
+      const { data: signUpData, error: signUpError } = await signupClient.auth.signUp({
+        email: validated.email,
+        password: validated.password,
+        options: {
+          data: {
+            full_name: validated.full_name,
+            phone: validated.phone || null,
+            role: "student",
+          },
+        },
+      });
+
+      if (signUpError || !signUpData.user) {
+        return {
+          success: false,
+          error: signUpError?.message || "Failed to register student account",
+        };
+      }
+
+      createdUserId = signUpData.user.id;
+    }
 
     revalidatePath("/admin/students");
-    return { success: true, userId: authUser.user.id };
+    return { success: true, userId: createdUserId };
   } catch (err: unknown) {
     if (err instanceof Error) {
       return { success: false, error: err.message };

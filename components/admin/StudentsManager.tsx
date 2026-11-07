@@ -58,8 +58,10 @@ export default function StudentsManager({
       } else {
         setErrorMsg(res.error || "Failed to create student account");
       }
-    } catch {
-      setErrorMsg("An unexpected error occurred");
+    } catch (err: unknown) {
+      setErrorMsg(
+        err instanceof Error ? err.message : "An unexpected error occurred while communicating with the server"
+      );
     }
   };
 
