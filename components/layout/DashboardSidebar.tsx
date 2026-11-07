@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { BookOpen, User, LogOut, ArrowLeft, Shield } from "lucide-react";
+import { BookOpen, User, LogOut, ArrowLeft, Shield, Video } from "lucide-react";
 import { signOutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,12 @@ export default function DashboardSidebar({
       href: "/dashboard",
       icon: BookOpen,
       exact: true,
+    },
+    {
+      name: "Class Recordings",
+      href: "/dashboard/recordings",
+      icon: Video,
+      exact: false,
     },
     {
       name: "Profile Settings",

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:test": "next start -p 3005",
+    "lint": "next lint",
+    "test": "node --test --experimental-strip-types tests/**/*.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -14,6 +16,7 @@
     "@supabase/supabase-js": "^2.49.1",
     "clsx": "^2.1.1",
     "gsap": "^3.12.7",
+    "hls.js": "^1.7.4",
     "lenis": "^1.1.20",
     "lucide-react": "^0.475.0",
     "next": "^15.1.7",

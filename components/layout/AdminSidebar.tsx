@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Calendar,
   GraduationCap,
-  BookOpen,
   Users,
   Image as ImageIcon,
   MessageSquareQuote,
@@ -16,6 +15,7 @@ import {
   Settings,
   LogOut,
   ExternalLink,
+  Video,
 } from "lucide-react";
 import { signOutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,7 @@ const adminNav = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard, exact: true },
   { name: "Batches", href: "/admin/batches", icon: Calendar },
   { name: "Courses", href: "/admin/courses", icon: GraduationCap },
-  { name: "Recordings", href: "/admin/lessons", icon: BookOpen },
+  { name: "Recordings", href: "/admin/recordings", icon: Video },
   { name: "Students", href: "/admin/students", icon: Users },
   { name: "Enquiries", href: "/admin/enquiries", icon: Inbox },
   { name: "Feedback", href: "/admin/feedback", icon: MessageSquareQuote },

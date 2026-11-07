@@ -1,22 +1,33 @@
 import { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import StudentsManager from "@/components/admin/StudentsManager";
-import type { Profile } from "@/types/database";
+import type { Profile, Recording, RecordingAccess } from "@/types/database";
 
 export const metadata: Metadata = {
   title: "Manage Students",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminStudentsPage() {
   const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("role", "student")
-    .order("created_at", { ascending: false });
+  const [studentsRes, recordingsRes, accessRes] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("role", "student")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("recordings")
+      .select("id, title, class_date, source_type, is_published")
+      .order("created_at", { ascending: false }),
+    supabase.from("recording_access").select("*"),
+  ]);
 
-  const students: Profile[] = data || [];
+  const students: Profile[] = studentsRes.data || [];
+  const recordings: Recording[] = (recordingsRes.data as unknown as Recording[]) || [];
+  const accessList: RecordingAccess[] = accessRes.data || [];
 
   return (
     <div className="space-y-6">
@@ -28,11 +39,15 @@ export default async function AdminStudentsPage() {
           Student Directory & Accounts
         </h1>
         <p className="mt-1 text-xs sm:text-sm text-charcoal-light">
-          Provision student credentials, assign temporary passwords, and control portal access.
+          Provision student credentials, assign temporary passwords, and control portal and video recording access.
         </p>
       </div>
 
-      <StudentsManager initialStudents={students} />
+      <StudentsManager
+        initialStudents={students}
+        initialRecordings={recordings}
+        initialAccessList={accessList}
+      />
     </div>
   );
 }
