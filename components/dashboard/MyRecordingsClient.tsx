@@ -7,7 +7,6 @@ import {
   Video,
   Play,
   Calendar,
-  Clock,
   CheckCircle2,
   BookOpen,
   Search,

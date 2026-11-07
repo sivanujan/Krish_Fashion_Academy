@@ -8,10 +8,8 @@ import {
   Search,
   CheckCircle2,
   AlertCircle,
-  Clock,
   Calendar,
   Users,
-  Copy,
   ExternalLink,
   Edit2,
   Trash2,
@@ -23,7 +21,6 @@ import {
   Film,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils";
 import { parseVideoSource, type ParseVideoOutput } from "@/lib/video/parseVideoSource";
@@ -1207,3 +1204,4 @@ export default function RecordingsManager({
     </div>
   );
 }
+

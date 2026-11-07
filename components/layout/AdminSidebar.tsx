@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Calendar,
   GraduationCap,
-  BookOpen,
   Users,
   Image as ImageIcon,
   MessageSquareQuote,

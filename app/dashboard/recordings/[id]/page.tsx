@@ -10,8 +10,25 @@ interface PageProps {
 
 export const dynamic = "force-dynamic";
 
+interface SingleRecordingRow {
+  id: string;
+  title: string;
+  description: string | null;
+  course_id: string | null;
+  session_id: string | null;
+  class_date: string | null;
+  source_type: PlayerRecording["source_type"];
+  embed_src: string | null;
+  video_id: string | null;
+  thumbnail_url: string | null;
+  duration_minutes: number | null;
+  courses: { title?: string } | { title?: string }[] | null;
+  class_sessions: { batch_code?: string; title?: string } | { batch_code?: string; title?: string }[] | null;
+  recording_views: { last_position_seconds?: number; completed?: boolean }[] | null;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { id } = await params;
+  await params;
   return {
     title: `Watch Lesson Recording | Krish Fashion Academy`,
   };
@@ -69,7 +86,7 @@ export default async function WatchRecordingPage({ params }: PageProps) {
         .single();
 
       if (directData) {
-        const d = directData as any;
+        const d = directData as unknown as SingleRecordingRow;
         const course = Array.isArray(d.courses) ? d.courses[0] : d.courses;
         const session = Array.isArray(d.class_sessions) ? d.class_sessions[0] : d.class_sessions;
         const view = Array.isArray(d.recording_views) ? d.recording_views[0] : d.recording_views;

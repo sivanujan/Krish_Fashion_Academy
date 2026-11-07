@@ -33,3 +33,4 @@ export function isAllowedEmbedHost(hostname: string): boolean {
     (allowed) => normalized === allowed || normalized.endsWith('.' + allowed)
   );
 }
+

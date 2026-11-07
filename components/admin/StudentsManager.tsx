@@ -13,15 +13,10 @@ import type { Profile, Recording, RecordingAccess } from "@/types/database";
 import {
   UserPlus,
   Search,
-  Phone,
-  Mail,
-  ShieldAlert,
   CheckCircle2,
   AlertCircle,
   Video,
   X,
-  Plus,
-  Trash2,
 } from "lucide-react";
 import { toggleStudentRecordingAccessAction } from "@/lib/actions/recordings";
 

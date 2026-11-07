@@ -2,14 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  Play,
   CheckCircle2,
   ExternalLink,
   Lock,
   RotateCcw,
   Video,
   Shield,
-  Volume2,
 } from "lucide-react";
 import Hls from "hls.js";
 import { saveRecordingProgressAction } from "@/lib/actions/recordings";
@@ -19,7 +17,7 @@ export interface VideoPlayerProps {
   recordingId: string;
   sourceType: VideoSourceType;
   embedSrc: string | null;
-  videoId: string | null;
+  videoId?: string | null;
   title: string;
   initialPositionSeconds?: number;
   initialCompleted?: boolean;
@@ -30,7 +28,6 @@ export default function VideoPlayer({
   recordingId,
   sourceType,
   embedSrc,
-  videoId,
   title,
   initialPositionSeconds = 0,
   initialCompleted = false,
@@ -41,7 +38,6 @@ export default function VideoPlayer({
   const [completed, setCompleted] = useState(initialCompleted);
   const [isMarkingWatched, setIsMarkingWatched] = useState(false);
   const [lastSavedPosition, setLastSavedPosition] = useState(initialPositionSeconds);
-  const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
   const [showResumedNotice, setShowResumedNotice] = useState(initialPositionSeconds > 5);
 
   // Auto-dismiss resume notice after 4 seconds
@@ -103,7 +99,6 @@ export default function VideoPlayer({
     let intervalId: NodeJS.Timeout;
 
     const handlePlay = () => {
-      setHasStartedPlaying(true);
       intervalId = setInterval(async () => {
         if (!video || video.paused) return;
         const currentPos = Math.floor(video.currentTime);

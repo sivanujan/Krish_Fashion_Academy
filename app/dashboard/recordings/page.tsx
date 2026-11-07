@@ -10,6 +10,25 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+interface RawQueryRecordingRow {
+  id: string;
+  title: string;
+  description: string | null;
+  course_id: string | null;
+  session_id: string | null;
+  class_date: string | null;
+  source_type: MyRecording["source_type"];
+  embed_src: string | null;
+  video_id: string | null;
+  thumbnail_url: string | null;
+  duration_minutes: number | null;
+  sort_order: number;
+  courses: { title?: string; slug?: string } | { title?: string; slug?: string }[] | null;
+  class_sessions: { batch_code?: string; title?: string } | { batch_code?: string; title?: string }[] | null;
+  recording_access: { granted_at?: string; expires_at?: string | null }[] | null;
+  recording_views: { last_position_seconds?: number; completed?: boolean }[] | null;
+}
+
 export default async function StudentRecordingsPage() {
   const supabase = await createClient();
   const {
@@ -57,7 +76,7 @@ export default async function StudentRecordingsPage() {
         .order("class_date", { ascending: false });
 
       if (directData) {
-        recordings = (directData as any[]).map((r) => {
+        recordings = (directData as unknown as RawQueryRecordingRow[]).map((r) => {
           const course = Array.isArray(r.courses) ? r.courses[0] : r.courses;
           const session = Array.isArray(r.class_sessions) ? r.class_sessions[0] : r.class_sessions;
           const access = Array.isArray(r.recording_access) ? r.recording_access[0] : r.recording_access;

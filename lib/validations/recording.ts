@@ -24,3 +24,4 @@ export const updateAccessSchema = z.object({
 });
 
 export type UpdateAccessInput = z.infer<typeof updateAccessSchema>;
+

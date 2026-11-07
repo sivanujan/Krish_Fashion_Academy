@@ -155,7 +155,7 @@ export function parseVideoSource(rawInput: string): ParseVideoOutput {
     host === 'youtube-nocookie.com'
   ) {
     let videoId: string | null = null;
-    let timeParam: string | null = searchParams.get('t') || searchParams.get('start');
+    const timeParam: string | null = searchParams.get('t') || searchParams.get('start');
 
     if (host === 'youtu.be') {
       videoId = pathname.replace(/^\/+/, '').split('/')[0] || null;

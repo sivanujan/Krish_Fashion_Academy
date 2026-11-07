@@ -7,8 +7,6 @@ import {
   ArrowLeft,
   Calendar,
   Clock,
-  BookOpen,
-  Share2,
 } from "lucide-react";
 import VideoPlayer from "@/components/video/VideoPlayer";
 import { formatDate } from "@/lib/utils";

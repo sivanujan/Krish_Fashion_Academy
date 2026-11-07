@@ -46,3 +46,4 @@
 ### Decision 5: Deactivated Students Security in Middleware
 - **Context:** Deactivated students (`is_active = false`) must not be able to browse the dashboard or stream assigned recordings.
 - **Decision:** In `lib/supabase/middleware.ts`, verify `is_active` for `/dashboard` routes. If deactivated, sign the session out immediately and redirect to `/login?error=deactivated`.
+
