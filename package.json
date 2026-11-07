@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:test": "next start -p 3005",
     "lint": "next lint",
     "test": "node --test --experimental-strip-types tests/**/*.test.ts"
   },

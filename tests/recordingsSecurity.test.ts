@@ -96,3 +96,4 @@ test('Security 8: Update Access Schema validates recording UUID and student UUID
   const validated = updateAccessSchema.safeParse(updatePayload);
   assert.equal(validated.success, true);
 });
+
