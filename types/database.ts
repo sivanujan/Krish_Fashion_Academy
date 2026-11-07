@@ -12,6 +12,15 @@ export type PaymentStatus = 'unpaid' | 'paid' | 'waived' | 'refunded';
 export type SessionStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 export type EnquiryStatus = 'new' | 'contacted' | 'registered' | 'closed';
 export type FeedbackStatus = 'pending' | 'approved' | 'hidden';
+export type VideoSourceType =
+  | 'youtube'
+  | 'vimeo'
+  | 'google_drive'
+  | 'bunny'
+  | 'mp4'
+  | 'hls'
+  | 'zoom_link'
+  | 'other_embed';
 
 export type Database = {
   public: {
@@ -579,6 +588,114 @@ export type Database = {
         };
         Relationships: [];
       };
+      recordings: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          course_id: string | null;
+          session_id: string | null;
+          class_date: string | null;
+          source_type: VideoSourceType;
+          source_url: string;
+          embed_src: string | null;
+          video_id: string | null;
+          thumbnail_url: string | null;
+          duration_minutes: number | null;
+          is_published: boolean;
+          sort_order: number;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          course_id?: string | null;
+          session_id?: string | null;
+          class_date?: string | null;
+          source_type: VideoSourceType;
+          source_url: string;
+          embed_src?: string | null;
+          video_id?: string | null;
+          thumbnail_url?: string | null;
+          duration_minutes?: number | null;
+          is_published?: boolean;
+          sort_order?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string | null;
+          course_id?: string | null;
+          session_id?: string | null;
+          class_date?: string | null;
+          source_type?: VideoSourceType;
+          source_url?: string;
+          embed_src?: string | null;
+          video_id?: string | null;
+          thumbnail_url?: string | null;
+          duration_minutes?: number | null;
+          is_published?: boolean;
+          sort_order?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      recording_access: {
+        Row: {
+          recording_id: string;
+          student_id: string;
+          granted_by: string | null;
+          granted_at: string;
+          expires_at: string | null;
+        };
+        Insert: {
+          recording_id: string;
+          student_id: string;
+          granted_by?: string | null;
+          granted_at?: string;
+          expires_at?: string | null;
+        };
+        Update: {
+          recording_id?: string;
+          student_id?: string;
+          granted_by?: string | null;
+          granted_at?: string;
+          expires_at?: string | null;
+        };
+        Relationships: [];
+      };
+      recording_views: {
+        Row: {
+          recording_id: string;
+          student_id: string;
+          last_position_seconds: number;
+          completed: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          recording_id: string;
+          student_id: string;
+          last_position_seconds?: number;
+          completed?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          recording_id?: string;
+          student_id?: string;
+          last_position_seconds?: number;
+          completed?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       public_sessions: {
@@ -623,6 +740,62 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
+      get_my_recordings: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          id: string;
+          title: string;
+          description: string | null;
+          course_id: string | null;
+          course_title: string | null;
+          course_slug: string | null;
+          session_id: string | null;
+          batch_code: string | null;
+          batch_title: string | null;
+          class_date: string | null;
+          source_type: VideoSourceType;
+          embed_src: string | null;
+          video_id: string | null;
+          thumbnail_url: string | null;
+          duration_minutes: number | null;
+          sort_order: number;
+          granted_at: string;
+          expires_at: string | null;
+          last_position_seconds: number;
+          completed: boolean;
+        }[];
+      };
+      get_recording_for_player: {
+        Args: {
+          p_recording_id: string;
+        };
+        Returns: {
+          id: string;
+          title: string;
+          description: string | null;
+          course_id: string | null;
+          course_title: string | null;
+          session_id: string | null;
+          batch_code: string | null;
+          batch_title: string | null;
+          class_date: string | null;
+          source_type: VideoSourceType;
+          embed_src: string | null;
+          video_id: string | null;
+          thumbnail_url: string | null;
+          duration_minutes: number | null;
+          last_position_seconds: number;
+          completed: boolean;
+        }[];
+      };
+      save_recording_with_access: {
+        Args: {
+          p_recording: Json;
+          p_student_ids: string[];
+          p_expires_at?: string | null;
+        };
+        Returns: string;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
@@ -644,3 +817,10 @@ export type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 export type FAQ = Database['public']['Tables']['faqs']['Row'];
 export type Faq = FAQ;
 export type SiteSettings = Database['public']['Tables']['site_settings']['Row'];
+export type Recording = Database['public']['Tables']['recordings']['Row'];
+export type RecordingInsert = Database['public']['Tables']['recordings']['Insert'];
+export type RecordingUpdate = Database['public']['Tables']['recordings']['Update'];
+export type RecordingAccess = Database['public']['Tables']['recording_access']['Row'];
+export type RecordingView = Database['public']['Tables']['recording_views']['Row'];
+export type MyRecording = Database['public']['Functions']['get_my_recordings']['Returns'][number];
+export type PlayerRecording = Database['public']['Functions']['get_recording_for_player']['Returns'][number];
