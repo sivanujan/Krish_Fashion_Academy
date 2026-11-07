@@ -75,6 +75,21 @@ export async function updateSession(request: NextRequest) {
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
+
+    // Verify student account is active
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active, role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile && !profile.is_active) {
+      await supabase.auth.signOut();
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("error", "account_deactivated");
+      return NextResponse.redirect(url);
+    }
   }
 
   // Redirect logged-in users away from auth pages
